@@ -2,13 +2,34 @@
 
 import axios from 'axios';
 
+// Function to get the API base URL
+const getBaseURL = () => {
+  // First try the environment variable
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  return 'http://localhost:5000/api';
+};
+
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Check server port on startup
+(async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/api/server-info');
+    if (response.data.port && response.data.port !== 5000) {
+      api.defaults.baseURL = `http://localhost:${response.data.port}/api`;
+    }
+  } catch (err) {
+    console.warn('Could not check server port:', err.message);
+  }
+})();
 
 // Add request interceptor for authentication
 api.interceptors.request.use(
@@ -29,12 +50,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     // Handle authentication errors
-    if (error.response && error.response.status === 401) {
+    if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
-    return Promise.reject(error);
+    return Promise.reject(error.response?.data?.message || error.message);
   }
 );
 

@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "cd client && pnpm build",
+        "outputDirectory": "client/dist"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/client/dist/index.html" }
+  ]
+}

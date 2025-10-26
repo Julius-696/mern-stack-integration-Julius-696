@@ -1,0 +1,5 @@
+# Build command for Render
+build = "cd server && pnpm install"
+
+# Start command for Render
+start = "cd server && pnpm start"

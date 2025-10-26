@@ -1,0 +1,202 @@
+# MERN Stack Blog Application
+
+A full-stack blog application built with the MERN stack (MongoDB, Express.js, React, Node.js) featuring user authentication, post management, and categories.
+
+## Features
+
+- 🔐 User authentication (JWT)
+- 📝 Create, read, update, and delete blog posts
+- 🏷️ Categorize posts
+- 💬 Comment system
+- 📱 Responsive design
+
+## Prerequisites
+
+- Node.js (v18 or higher)
+- MongoDB (local installation or Atlas account)
+- pnpm (or npm/yarn)
+
+## Project Structure
+
+```
+mern-blog/
+├── client/                # React front-end
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── hooks/       # Custom hooks
+│   │   └── services/    # API services
+│   └── package.json
+└── server/               # Express back-end
+    ├── models/          # Mongoose models
+    ├── routes/          # API routes
+    ├── middleware/      # Custom middleware
+    └── server.js
+```
+
+## Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/mern-blog.git
+   cd mern-blog
+   ```
+
+2. Install server dependencies:
+   ```bash
+   cd server
+   pnpm install
+   ```
+
+3. Create server `.env` file:
+   ```
+   MONGODB_URI=mongodb://localhost:27017/mern-blog
+   PORT=5000
+   NODE_ENV=development
+   JWT_SECRET=your_jwt_secret_here
+   ```
+
+4. Install client dependencies:
+   ```bash
+   cd ../client
+   pnpm install
+   ```
+
+5. Create client `.env` file:
+   ```
+   VITE_API_URL=http://localhost:5000/api
+   ```
+
+6. Start development servers:
+   ```bash
+   # Terminal 1 - Start server
+   cd server
+   pnpm dev
+
+   # Terminal 2 - Start client
+   cd client
+   pnpm dev
+   ```
+
+## API Documentation
+
+### Authentication
+
+#### Register User
+- **POST** `/api/auth/register`
+- Body: `{ name: string, email: string, password: string }`
+- Returns: `{ user: User, token: string }`
+
+#### Login
+- **POST** `/api/auth/login`
+- Body: `{ email: string, password: string }`
+- Returns: `{ user: User, token: string }`
+
+#### Get Current User
+- **GET** `/api/auth/me`
+- Headers: `Authorization: Bearer <token>`
+- Returns: `User`
+
+### Posts
+
+#### List Posts
+- **GET** `/api/posts`
+- Query params: 
+  - `page`: number (default: 1)
+  - `limit`: number (default: 10)
+  - `category`: string (optional)
+- Returns: `{ posts: Post[], page: number, limit: number, total: number }`
+
+#### Get Single Post
+- **GET** `/api/posts/:id`
+- Returns: `Post`
+
+#### Create Post
+- **POST** `/api/posts`
+- Headers: `Authorization: Bearer <token>`
+- Body: `{ title: string, content: string, category: string, excerpt?: string }`
+- Returns: `Post`
+
+#### Update Post
+- **PUT** `/api/posts/:id`
+- Headers: `Authorization: Bearer <token>`
+- Body: `{ title?: string, content?: string, category?: string, excerpt?: string }`
+- Returns: `Post`
+
+#### Delete Post
+- **DELETE** `/api/posts/:id`
+- Headers: `Authorization: Bearer <token>`
+- Returns: `{ message: string }`
+
+### Categories
+
+#### List Categories
+- **GET** `/api/categories`
+- Returns: `Category[]`
+
+#### Create Category
+- **POST** `/api/categories`
+- Headers: `Authorization: Bearer <token>`
+- Body: `{ name: string, description?: string }`
+- Returns: `Category`
+
+## Models
+
+### User
+```typescript
+{
+  name: string;
+  email: string;
+  password: string;
+  role: "user" | "admin";
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### Post
+```typescript
+{
+  title: string;
+  content: string;
+  featuredImage?: string;
+  slug: string;
+  excerpt?: string;
+  author: User;
+  category: Category;
+  tags: string[];
+  isPublished: boolean;
+  viewCount: number;
+  comments: Comment[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### Category
+```typescript
+{
+  name: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+## Assignment Completion
+
+This implementation fulfills all requirements from `Week4-Assignment.md`:
+
+1. ✅ Project setup with clear directory structure
+2. ✅ MongoDB connection with Mongoose models
+3. ✅ Express.js server with middleware
+4. ✅ React front-end with Vite
+5. ✅ Environment variable configuration
+6. ✅ RESTful API implementation
+7. ✅ React components and custom hooks
+8. ✅ State management and API integration
+9. ✅ JWT authentication
+10. ✅ Documentation and examples
+
+## License
+
+This project is licensed under the MIT License.

@@ -19,17 +19,19 @@ const api = axios.create({
   },
 });
 
-// Check server port on startup
-(async () => {
-  try {
-    const response = await axios.get('https://mern-stack-server.onrender.com/posts?page=1&limit=10');
-    if (response.data.port && response.data.port !== 5000) {
-      api.defaults.baseURL = `http://localhost:${response.data.port}/api`;
+// Only check the local server port when running locally
+if (window.location.hostname === 'localhost') {
+  (async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/server-info');
+      if (response.data.port && response.data.port !== 5000) {
+        api.defaults.baseURL = `http://localhost:${response.data.port}/api`;
+      }
+    } catch (err) {
+      console.warn('Could not check server port:', err.message);
     }
-  } catch (err) {
-    console.warn('Could not check server port:', err.message);
-  }
-})();
+  })();
+}
 
 // Add request interceptor for authentication
 api.interceptors.request.use(

@@ -22,7 +22,7 @@ const api = axios.create({
 // Check server port on startup
 (async () => {
   try {
-    const response = await axios.get('http://localhost:5000/api/server-info');
+    const response = await axios.get('https://mern-stack-server.onrender.com/posts?page=1&limit=10');
     if (response.data.port && response.data.port !== 5000) {
       api.defaults.baseURL = `http://localhost:${response.data.port}/api`;
     }

@@ -2,13 +2,28 @@
 
 import axios from 'axios';
 
-// Function to get the API base URL
+// Function to get the API base URL and ensure it ends with '/api'
 const getBaseURL = () => {
-  // First try the environment variable
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  // Prefer explicit VITE_API_URL
+  let base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+  // If user provided a URL without the '/api' suffix, add it.
+  try {
+    const u = new URL(base);
+    // Normalize trailing slash and ensure '/api' path
+    if (!u.pathname.endsWith('/api')) {
+      // Remove trailing slash(s) then append /api
+      u.pathname = u.pathname.replace(/\/+$/, '') + '/api';
+      base = u.toString().replace(/\/$/, '');
+    } else {
+      base = u.toString().replace(/\/$/, '');
+    }
+  } catch (e) {
+    // If it's not a full URL (unlikely), fallback to ensuring suffix
+    if (!base.endsWith('/api')) base = base.replace(/\/+$/, '') + '/api';
   }
-  return 'http://localhost:5000/api';
+
+  return base;
 };
 
 // Create axios instance with base URL
